@@ -10,6 +10,7 @@ https://cors-anywhere.herokuapp.com
 and it didn't sork
 */
 
+//better than fetch - doesn't crash
 import axios from 'axios';
 
 async function getResult(query) {
@@ -18,5 +19,5 @@ async function getResult(query) {
     const recipes = res.data.recipes;
     console.log(recipes);
 }
-getResult('pizza');
+getResult('pasta');
 
