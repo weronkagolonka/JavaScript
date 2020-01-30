@@ -1,0 +1,139 @@
+<head></head>
+    <title>Does it fit?</title>
+</head>
+
+<body>
+    <div class = "input_container">
+        <header class = "header">
+            <input type="number" id="input__field" placeholder="Type the number..." value=>
+            <select id="first_unit">
+                <option>bit</option>
+                <option>Byte</option>
+                <option>kB</option>
+                <option>MB</option>
+                <option>GB</option>
+                <option>TB</option>
+            </select>
+        </header>
+    </div>
+    <div class="convert_container">
+        <header class="header">
+            <p>To:</p>
+            <select id="converted_unit">
+                <option>bit</option>
+                <option>Byte</option>
+                <option>kB</option>
+                <option>MB</option>
+                <option>GB</option>
+                <option>TB</option>
+            </select>
+            <button class="btn_convert">
+                <span>Convert!</span>
+            </button>
+        </header>
+    </div>
+    <div class = "output_container">
+        <header class="header">
+            <p id="input_value">32 bit is 4 byte</p>
+        </header>
+    </div>
+    <script>
+        const units = ["bit", "byte"];
+        const prefix = ["kilo", "mega", "giga", "tera"];
+        const shortNames = ["bit", "Byte", "kB", "MB", "GB", "TB"];
+        const DOMstrings = {
+            inputNumber: document.getElementById("input__field"),
+            unit1: document.getElementById("first_unit"),
+            unit1options: document.getElementById("first_unit").options,
+            unit1Index: document.getElementById("first_unit").selectedIndex,
+            unit2: document.getElementById("converted_unit"),
+            unit2options: document.getElementById("converted_unit").options,
+            unit2Index: document.getElementById("converted_unit").selectedIndex,
+            convertBtn: document.querySelector('.btn_convert')
+        };
+
+        //zaleznosc miedzy jednostkami
+        //bit i bajt:
+        //juz kurwa dziala dziala
+        const bitByte = function(index1, index2, number) {
+            let result;
+
+            if(index1 === 0 && index2 === 1) {
+                //bit -> byte
+                result = number / 8;
+            } else if(index1 === index2) {
+                //unit = unit
+                result = number;
+            } else if(index1 === 0 && index2 > 1) {
+                //bit -> kb, MB, GB, TB
+                result = kiloMega(index1, index2, number);
+                result = result / 8;
+            } else if(index1 >= 1 && index2 === 0) {
+                //byte, etc. -> bit
+                result = kiloMega(index1, index2, number);
+                result = result * 8;
+            } else if(index1 >=  1 && index2 >= 1) {
+                //everything except bit
+                result = kiloMega(index1, index2, number);
+            }
+            return result;
+            };
+
+        //prefix
+        //b, B, kB, MB, GB, TB
+        const kiloMega = function(index1, index2, num) {
+            var converted, indexRatio, sum;
+            var calcRatio = 0.000000000001;
+            var ratio = [];
+            
+            //only for bytes
+            for(i = 0; i < 9; i++) {
+                ratio.push(calcRatio);
+                calcRatio = calcRatio * 1000;
+            };
+
+            if(index1 === 0) {
+                indexRatio = 5 - index2;
+            } else if(index1 >= 1 && index2 === 0) {
+                indexRatio = index1 + 3;
+            } else if(index1 >= 1 && index2 >= 1) {
+                sum = index1 + 4; //constant sum of index2 and indexRatio
+                indexRatio = sum - index2;
+            }
+            
+            converted = num * ratio[indexRatio];
+
+            return converted;
+        };
+
+        //update interface
+
+        //convert to bit/byte
+        
+        const convert = function() {
+            DOMstrings.convertBtn.addEventListener('click', () => {
+                let i1, i2, result;
+                var number = parseInt(DOMstrings.inputNumber.value);
+                var unit1 = DOMstrings.unit1.value;
+                var unit2 = DOMstrings.unit2.value;
+                for(i = 0; i < shortNames.length; i++) {
+                    if(unit1 === shortNames[i]) {
+                        i1 = i;
+                    }
+
+                    if(unit2 === shortNames[i]) {
+                        i2 = i;
+                    }
+                };
+                
+                result = bitByte(i1, i2, number);
+                console.log(i1, i2, number);
+
+                document.getElementById("input_value").textContent = `${number} ${unit1} is ${result} ${unit2}.`
+            });
+        };
+
+        convert();
+   
+    </script>
+</body>
