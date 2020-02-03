@@ -24,7 +24,6 @@ const state = {};
 const controlSearch = async () => {
     //1. get query from view
     const query = searchView.getInput(); //TODO
-    console.log(query);
 
     if(query) {
         //2. new search object and add to the state
@@ -37,6 +36,7 @@ const controlSearch = async () => {
 
         //4. Search for recipes - an array with all the recipes that match the query
         await state.search.getResult();
+        console.log(state.search.pickUpResult().length);
 
         //5. render results on UI
         clearLoader();
@@ -47,4 +47,18 @@ const controlSearch = async () => {
 elements.searchForm.addEventListener('submit', e => {
     e.preventDefault();
     controlSearch();
-})
+});
+
+elements.searchResPages.addEventListener('click', e => {
+    //.closest('selector class') - clicks on the whole selected element, not just text, button or icon
+    const btn = e.target.closest('.btn-inline');
+    if (btn) {
+        // goto - go to the element within the page; gotoPage - goes to an another page
+        
+        //clear the result list
+        searchView.clearResults();
+
+        const goToPage = parseInt(btn.dataset.goto, 10);
+        searchView.renderResults(state.search.pickUpResult(), goToPage);
+    }
+});
