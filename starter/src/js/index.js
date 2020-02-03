@@ -9,15 +9,42 @@ another proxy if crossorigin doesn't work:
 https://cors-anywhere.herokuapp.com
 and it didn't sork
 */
+import Search from './models/Search';
+import * as searchView from './views/searchView';
+import { elements, renderLoader, clearLoader } from './views/base';
 
-//better than fetch - doesn't crash
-import axios from 'axios';
+/** global state of the app
+ * - Search object
+ * - Current recipe object
+ * - Shopping list
+ * - Liked recipes
+*/
+const state = {};
 
-async function getResult(query) {
-    const proxy = 'https://cors-anywhere.herokuapp.com/';
-    const res = await axios(`${proxy}https://forkify-api.herokuapp.com/api/search?q=${query}`);
-    const recipes = res.data.recipes;
-    console.log(recipes);
+const controlSearch = async () => {
+    //1. get query from view
+    const query = searchView.getInput(); //TODO
+    console.log(query);
+
+    if(query) {
+        //2. new search object and add to the state
+        state.search = new Search(query);
+
+        //3. Prepare UI for results
+        searchView.clearInput();
+        searchView.clearResults();
+        renderLoader(elements.searchRes);
+
+        //4. Search for recipes - an array with all the recipes that match the query
+        await state.search.getResult();
+
+        //5. render results on UI
+        clearLoader();
+        searchView.renderResults(state.search.pickUpResult());
+    }
 }
-getResult('pasta');
 
+elements.searchForm.addEventListener('submit', e => {
+    e.preventDefault();
+    controlSearch();
+})
