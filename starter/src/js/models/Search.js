@@ -1,14 +1,13 @@
  //better than fetch - doesn't crash
 import axios from 'axios';
+import { proxy } from '../config';
 
 export default class Search {
     constructor(query) {
          this.query = query;
     }
 
-    async getResult() {
-        const proxy = 'https://cors-anywhere.herokuapp.com/';
-
+    async getResult() { 
         //handle the errors; fetch wouldn't probably have recognized e.g. a typo
         try {
             const res = await axios(`${proxy}https://forkify-api.herokuapp.com/api/search?q=${this.query}`);
