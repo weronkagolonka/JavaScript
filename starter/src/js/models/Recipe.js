@@ -31,4 +31,69 @@ export default class Recipe {
     calcServings() {
         this.servings = 4;
     }
+
+    parseIngredients() {
+        const unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
+        const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
+
+        const newIngredients = this.ingredients.map(el => {
+            //1. uniform unit
+            let ingredient = el.toLowerCase();
+            unitsLong.forEach((unit, i) => {
+                //replace method search for any string that matches with unit and replaces it with shorter version
+                ingredient = ingredient.replace(unit, unitsShort[i]);
+            })
+
+            //2. remove parentheses - REGULAR EXPRESSIONS
+            ingredient = ingredient.replace(/ *\([^]*\) */g, ' ');
+
+            //3. Parse ingredients into count, unit and ingredient
+            const arrIng = ingredient.split(' ');
+            //returns an index of the element that matches the requirements of the callback func
+            //find position of the unit even though you don't know which unit you're looking for
+            const unitIndex = arrIng.findIndex(el2 => unitsShort.includes(el2));
+
+            let objIng;
+            if (unitIndex > -1) {
+                //there's a unit
+
+                //get an amount - a number before the unit
+                const arrCount = arrIng.slice(0, unitIndex);
+                let count;
+                if (arrCount.length === 1) {
+                    count = eval(arrCount[0].replace('-', '+'));
+                } else {
+                    //[1, 1/2] --> '1+1/2' --> evaluates as JS code --> 1.5
+                    count = eval(arrIng.slice(0, unitIndex).join('+')); 
+                }
+
+                objIng = {
+                    count,
+                    unit: arrIng[unitIndex],
+                    ingredient: arrIng.slice(unitIndex + 1).join(' ')
+                };
+
+            } else if (parseInt(arrIng[0], 10)) {
+                //can convert to int, so there's a number, not a unit
+                objIng = {
+                    count: parseInt(arrIng[0], 10),
+                    unit: '',
+                    ingredient: arrIng.slice(1).join(' ')
+                }
+
+            } else if (unitIndex === -1) {
+                //no unit, no number
+                objIng = {
+                    count: 1,
+                    unit: '',
+                    ingredient
+                }
+            } 
+
+            //each iteration of map has to return something
+            return objIng;
+        });
+        
+        this.ingredients = newIngredients; 
+    }
 };

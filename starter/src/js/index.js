@@ -28,7 +28,7 @@ const state = {};
  */
 const controlSearch = async () => {
     //1. get query from view
-    const query = searchView.getInput(); //TODO
+    const query = searchView.getInput();
 
     if(query) {
         //2. new search object and add to the state
@@ -39,20 +39,28 @@ const controlSearch = async () => {
         searchView.clearResults();
         renderLoader(elements.searchRes);
 
-        //4. Search for recipes - an array with all the recipes that match the query
-        await state.search.getResult();
-        console.log(state.search.pickUpResult().length);
+        try {
+            //4. Search for recipes - an array with all the recipes that match the query
+            await state.search.getResult();
 
-        //5. render results on UI
-        clearLoader();
-        searchView.renderResults(state.search.pickUpResult());
+            //5. render results on UI
+            clearLoader();
+            searchView.renderResults(state.search.pickUpResult());
+        } catch (err) {
+            alert('Something wrong with the search...');
+            clearLoader();
+        }
+
+
     }
-}
+};
+
 
 elements.searchForm.addEventListener('submit', e => {
     e.preventDefault();
     controlSearch();
 });
+
 
 elements.searchResPages.addEventListener('click', e => {
     //.closest('selector class') - clicks on the whole selected element, not just text, button or icon
@@ -72,6 +80,39 @@ elements.searchResPages.addEventListener('click', e => {
 /**
  * RECIPE CONTROLLER
  */
-const r = new Recipe(47746);
-r.getRecipe();
-console.log(r);
+
+const controlRecipe = async () => {
+    //hash from the URL address [string]
+    const id = window.location.hash.replace('#', '');
+    console.log(id);
+
+    if (id) {
+        //Prepare UI for changes
+
+        //Create new recipe
+        state.recipe = new Recipe(id);
+
+        try {
+            //Get recipe data and parse ingredients
+            await state.recipe.getRecipe();
+            console.log(state.recipe.ingredients);
+            state.recipe.parseIngredients();
+
+            //Calculate serving 
+            state.recipe.calcServings();
+            state.recipe.calcTime();
+            //Render the recipe
+            console.log(state.recipe);
+        } catch (err) {
+            alert('Error processing recipe!'); 
+        }
+    };
+};
+
+ //don't need to call while creating an event listener REMEMBER
+ //shows hash when we click at a different item
+
+ //the chosen recipe data remains after reloading 
+
+ //create one event listener for two events
+ ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
