@@ -35,14 +35,14 @@ export default class Recipe {
     parseIngredients() {
         const unitsLong = ['tablespoons', 'tablespoon', 'ounces', 'ounce', 'teaspoons', 'teaspoon', 'cups', 'pounds'];
         const unitsShort = ['tbsp', 'tbsp', 'oz', 'oz', 'tsp', 'tsp', 'cup', 'pound'];
-        const units = [...unitsShort, 'kg', 'g'];
+        const units = [...unitsShort, 'kg', 'g', 'ml'];
 
         const newIngredients = this.ingredients.map(el => {
             //1. uniform unit
             let ingredient = el.toLowerCase();
             unitsLong.forEach((unit, i) => {
                 //replace method search for any string that matches with unit and replaces it with shorter version
-                ingredient = ingredient.replace(unit, unitsShort[i]);
+                ingredient = ingredient.replace(unit, units[i]);
             })
 
             //2. remove parentheses - REGULAR EXPRESSIONS
@@ -100,4 +100,19 @@ export default class Recipe {
         
         this.ingredients = newIngredients; 
     }
+    
+    updateServings(type) {
+        //dec -> decrease inc -> increase
+
+        //update servings
+        const newServings = type === 'dec' ? this.servings - 1 : this.servings + 1;
+
+        //update ingredients
+        this.ingredients.forEach(ing => {
+            //4
+            ing.count *= (newServings / this.servings);
+        });
+
+        this.servings = newServings;
+    };
 };

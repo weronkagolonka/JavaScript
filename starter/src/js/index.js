@@ -85,12 +85,17 @@ elements.searchResPages.addEventListener('click', e => {
 const controlRecipe = async () => {
     //hash from the URL address [string]
     const id = window.location.hash.replace('#', '');
-    console.log(id);
+    //console.log(id);
 
     if (id) {
         //Prepare UI for changes
         recipeView.clearRecipe();
         renderLoader(elements.recipe);
+
+        //Highlight the selected result
+        if(state.search) {
+            searchView.highlightSelected(id);
+        };
 
         //Create new recipe
         state.recipe = new Recipe(id);
@@ -98,7 +103,7 @@ const controlRecipe = async () => {
         try {
             //Get recipe data and parse ingredients
             await state.recipe.getRecipe();
-            console.log(state.recipe.ingredients);
+            //console.log(state.recipe.ingredients);
             state.recipe.parseIngredients();
 
             //Calculate serving 
@@ -121,3 +126,18 @@ const controlRecipe = async () => {
 
  //create one event listener for two events
  ['hashchange', 'load'].forEach(event => window.addEventListener(event, controlRecipe));
+
+ //handling the recipe btn clicks
+ elements.recipe.addEventListener('click', e => {
+    //.btn-decrease * -> any child element of the button
+    if (e.target.matches('.btn-decrease, .btn-decrease *')) {
+        if (state.recipe.servings > 1) {
+            state.recipe.updateServings('dec');
+            recipeView.updateServingsIngredients(state.recipe);
+        };
+    } else if (e.target.matches('.btn-increase, .btn-increase *')) {
+        state.recipe.updateServings('inc');
+    };
+    
+    console.log(state.recipe);
+ });
