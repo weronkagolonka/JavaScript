@@ -25,8 +25,8 @@ import { elements, renderLoader, clearLoader } from './views/base';
  * - Shopping list
  * - Liked recipes
 */
+
 const state = {};
-window.state = state;
 
 /**
  * SEARCH CONTROLLER
@@ -77,7 +77,13 @@ elements.searchResPages.addEventListener('click', e => {
         searchView.clearResults();
 
         const goToPage = parseInt(btn.dataset.goto, 10);
-        searchView.renderResults(state.search.pickUpResult(), goToPage);
+        if (state.search) {
+            searchView.renderResults(state.search.pickUpResult(), goToPage);
+        } else {
+            searchView.renderResults(state.oldResults, goToPage);
+        }
+        localStorage.setItem('page', JSON.stringify(goToPage));
+        
     }
 });
 
@@ -153,10 +159,6 @@ const controlList = () => {
  * LIKE CONTROLLER
  */
 
-//temporary
-state.likes = new Likes();
-likesView.toggleLikeMenu(state.likes.getNumberLikes());
-
 const controlLikes = () => {
     if (!state.likes) state.likes = new Likes();
 
@@ -191,6 +193,23 @@ const controlLikes = () => {
     }
     likesView.toggleLikeMenu(state.likes.getNumberLikes()); 
 }
+
+// Restore liked recipe --and results-- after loading the page
+window.addEventListener('load', () => {
+    state.likes = new Likes();
+    state.likes.readStorage();
+    state.oldResults = JSON.parse(localStorage.getItem('searchResult'));
+
+    likesView.toggleLikeMenu(state.likes.getNumberLikes());
+
+    //render existing likes
+    state.likes.likes.forEach(el => {
+        likesView.renderLike(el);
+    });
+
+    const lastPage = JSON.parse(localStorage.getItem('page'));
+    if (state.oldResults) searchView.renderResults(state.oldResults, lastPage);
+});
 
 
 
@@ -234,5 +253,3 @@ elements.shopping.addEventListener('click', e => {
         controlLikes();
     }
  });
-
-//window.l = new List();

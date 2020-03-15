@@ -13,7 +13,10 @@ export default class Search {
             const res = await axios(`${proxy}https://forkify-api.herokuapp.com/api/search?q=${this.query}`);
             //array with the recipes
             this.result = res.data.recipes;
-            //console.log(this.result);
+
+            // add to the local storage
+            this.storeResults();
+
         } catch(error) {
             alert(error);
         }
@@ -23,4 +26,17 @@ export default class Search {
     pickUpResult() {
         return this.result;
     }
+
+    storeResults() {
+        localStorage.setItem('searchResult', JSON.stringify(this.result));
+    }
+
+    /*
+    readResults() {
+        const storage = JSON.parse(localStorage.getItem('searchResult'));
+
+        if (storage) this.query = storage;
+        console.log(storage);
+    }
+    */
 }
