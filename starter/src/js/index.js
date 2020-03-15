@@ -82,7 +82,7 @@ elements.searchResPages.addEventListener('click', e => {
         } else {
             searchView.renderResults(state.oldResults, goToPage);
         }
-        localStorage.setItem('page', JSON.stringify(goToPage));
+        sessionStorage.setItem('page', JSON.stringify(goToPage));
         
     }
 });
@@ -198,7 +198,7 @@ const controlLikes = () => {
 window.addEventListener('load', () => {
     state.likes = new Likes();
     state.likes.readStorage();
-    state.oldResults = JSON.parse(localStorage.getItem('searchResult'));
+    state.oldResults = JSON.parse(sessionStorage.getItem('searchResult'));
 
     likesView.toggleLikeMenu(state.likes.getNumberLikes());
 
@@ -207,11 +207,13 @@ window.addEventListener('load', () => {
         likesView.renderLike(el);
     });
 
-    const lastPage = JSON.parse(localStorage.getItem('page'));
-    if (state.oldResults) searchView.renderResults(state.oldResults, lastPage);
+    const lastPage = JSON.parse(sessionStorage.getItem('page'));
+    if (state.oldResults && lastPage > 1) {
+        searchView.renderResults(state.oldResults, lastPage);
+    } else if (state.oldResults) { 
+        searchView.renderResults(state.oldResults);
+    }
 });
-
-
 
 // Handle the shopping list buttons - delete/update
 elements.shopping.addEventListener('click', e => {

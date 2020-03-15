@@ -28,6 +28,6 @@ export default class Search {
     }
 
     storeResults() {
-        localStorage.setItem('searchResult', JSON.stringify(this.result));
+        sessionStorage.setItem('searchResult', JSON.stringify(this.result));
     }
 }
