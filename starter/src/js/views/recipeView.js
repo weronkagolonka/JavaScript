@@ -6,7 +6,7 @@ export const clearRecipe = () => {
 };
 
 const formatCount = count => {
-    //sometimes the count might undefined
+    //sometimes the count might be undefined
     if (count) {
         //count = 2.5 ---> 2 1/2
         //count = 0.5 ---> 1/2
@@ -39,7 +39,7 @@ const createIngredient = ingredient => `
     </li>
 `;
 
-export const renderRecipe = recipe => {
+export const renderRecipe = (recipe, isLiked) => {
     const markup = `
     <figure class="recipe__fig">
         <img src=${recipe.pic} alt=${recipe.title} class="recipe__img">
@@ -77,7 +77,7 @@ export const renderRecipe = recipe => {
         </div>
         <button class="recipe__love">
             <svg class="header__likes">
-                <use href="img/icons.svg#icon-heart-outlined"></use>
+                <use href="img/icons.svg#icon-heart${isLiked ? '' : '-outlined'}"></use>
             </svg>
         </button>
     </div>
@@ -88,7 +88,7 @@ export const renderRecipe = recipe => {
             /* map returns an array, we simply join each element in order to create a long text which will be used in HTML*/}
         </ul>
 
-        <button class="btn-small recipe__btn">
+        <button class="btn-small recipe__btn recipe__btn--add">
             <svg class="search__icon">
                 <use href="img/icons.svg#icon-shopping-cart"></use>
             </svg>

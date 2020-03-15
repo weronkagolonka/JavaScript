@@ -109,7 +109,7 @@ export default class Recipe {
 
         //update ingredients
         this.ingredients.forEach(ing => {
-            //4
+            // newServings / 4
             ing.count *= (newServings / this.servings);
         });
 
