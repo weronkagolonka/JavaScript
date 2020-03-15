@@ -30,13 +30,4 @@ export default class Search {
     storeResults() {
         localStorage.setItem('searchResult', JSON.stringify(this.result));
     }
-
-    /*
-    readResults() {
-        const storage = JSON.parse(localStorage.getItem('searchResult'));
-
-        if (storage) this.query = storage;
-        console.log(storage);
-    }
-    */
 }
