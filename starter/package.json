@@ -11,7 +11,7 @@
   "author": "Weronka Golonka",
   "license": "ISC",
   "devDependencies": {
-    "minimist": ">=1.2.2",
+    "minimist": ">=1.2.3",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
     "html-webpack-plugin": "^3.2.0",
@@ -20,7 +20,7 @@
     "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
-    "minimist": ">=1.2.2",
+    "minimist": ">=1.2.3",
     "axios": "^0.19.2",
     "babel-loader": "^7.1.5",
     "babel-polyfill": "^6.26.0",
