@@ -21,7 +21,7 @@
   },
   "dependencies": {
     "minimist": ">=1.2.3",
-    "axios": "^0.19.2",
+    "axios": ">=0.21.1",
     "babel-loader": "^7.1.5",
     "babel-polyfill": "^6.26.0",
     "fractional": "^1.0.0",
